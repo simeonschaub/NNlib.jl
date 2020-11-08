@@ -28,7 +28,10 @@ See also [`logsoftmax`](@ref).
 function softmax(xs::AbstractArray; dims=1)
     max_ = maximum(xs, dims=dims)
     exp_ = exp.(xs .- max_)
-    exp_ ./ sum(exp_, dims=dims)
+    sum_ = max_
+    Base.reducedim!(+, sum_, exp_)
+    exp_ .= exp_ ./ sum_
+    return exp_
 end
 
 function softmax!(out::AbstractVecOrMat{T}, xs::AbstractVecOrMat{T}) where {T}
